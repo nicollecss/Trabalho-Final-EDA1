@@ -36,7 +36,7 @@ O projeto consiste no desenvolvimento de um **sistema em linguagem C**, executad
 
 ---
 
-## 👨‍🏫 Disciplina
+## Disciplina
 
 - **Estrutura de Dados e Algoritmos I (EDA1)**
 - Professor: **Lucas Boaventura**
