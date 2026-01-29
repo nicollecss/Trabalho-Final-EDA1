@@ -5,23 +5,23 @@ O projeto consiste no desenvolvimento de um **sistema em linguagem C**, executad
 ## Funcionalidades
 
 ### Gerenciamento de Clientes
-- Cadastrar cliente (CPF, nome e telefone);
+- Cadastrar cliente (CPF, nome, email, telefone e data de nascimento);
 - Listar clientes;
 - Buscar cliente pelo CPF;
 - Editar dados do cliente;
 - Remover cliente.
 
 ### Gerenciamento de Produtos
-- Cadastrar produto (código, nome e preço);
-- Listar produtos;
+- Cadastrar produto (código único, nome preço e quantidade);
+- Listar todos os produtos;
 - Buscar produto pelo código;
 - Editar dados do produto;
 - Remover produto.
 
 ### Modo Compra
-- Adicionar produtos ao carrinho de um cliente;
-- Listar produtos do carrinho;
-- Remover produtos do carrinho.
+- Um cliente incluir produtos que deseja comprar ao carrinho;
+- Listar produtos do carrinho de um cliente, informando quantidade de itens e valor total da compra;
+- Remover produtos do carrinho de um cliente.
 
 ---
 
