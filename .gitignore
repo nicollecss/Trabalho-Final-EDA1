@@ -1,0 +1,13 @@
+# Arquivos gerados pelo compilador
+*.o
+*.exe
+
+# Executável padrão
+a.out
+
+# Configurações do VS Code
+.vscode/
+
+# Arquivos temporários
+*.log
+*.tmp
