@@ -8,4 +8,7 @@
 
 // aqui definimos as funções que usaremos
 
+cliente *cadastra_cliente();
+void menu_inicial();
+
 #endif

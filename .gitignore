@@ -1,6 +1,7 @@
 # Arquivos gerados pelo compilador
 *.o
 *.exe
+programa.exe
 
 # Executável padrão
 a.out
