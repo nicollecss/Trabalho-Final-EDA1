@@ -10,7 +10,13 @@ typedef struct Cliente {
     char data_nascimento[15];
 }cliente;
 
-//-> struct para Produtos
+typedef struct Produto{
+    int cod_unico;
+    char *nome;
+    float preco;
+    int quant;
+    struct Produto *prox;
+} produto;
 
 #endif
 

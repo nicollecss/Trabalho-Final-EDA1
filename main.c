@@ -1,4 +1,4 @@
-//principal que retorna o sistema.
+// principal que retorna o sistema.
 
 #include <stdio.h>
 #include "funcoes.h"
@@ -6,6 +6,8 @@
 #include <stdlib.h>
 
 int main() {
+    
     menu_inicial();
+    
     return 0;
 }

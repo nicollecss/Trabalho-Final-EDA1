@@ -6,9 +6,11 @@
 #include <stdlib.h>
 #include "structs.h"
 
-// aqui definimos as funções que usaremos
-
-cliente *cadastra_cliente();
+// aqui definimos as assinaturas das funções que usaremos
 void menu_inicial();
+cliente *cadastra_cliente();
+
+produto *cria_lista();
+void cadastra_produto(produto *cabeca);
 
 #endif
