@@ -7,7 +7,8 @@ typedef struct Cliente {
     char cpf[50];
     char email[50];
     char telefone[15];
-    char data_nascimento[15];
+    char data_nasc[15];
+    struct Cliente *prox;
 }cliente;
 
 typedef struct Produto{
