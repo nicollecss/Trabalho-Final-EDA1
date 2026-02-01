@@ -230,10 +230,29 @@ produto* cria_lista_produtos() {
     return cabeca;
 }
 
+
+void libera_lista_produtos(produto *cabeca) {
+    if (cabeca == NULL) return;
+
+    produto *aux = cabeca;
+    while (aux != NULL) {
+        produto *temp = aux;
+        aux = aux->prox;
+
+        if (temp->nome != NULL) {
+            free(temp->nome);
+        }
+
+        free(temp);
+    }
+}
+
+
 void limpar_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
+
 
 void cadastra_produto(produto *cabeca) {
     if (cabeca == NULL) return;
@@ -241,8 +260,8 @@ void cadastra_produto(produto *cabeca) {
     char buffer[100];
     int codigo;
 
-    printf(" \n");
-    printf("-----CADASTRO DO PRODUTO-----\n");
+    printf(" \n\n");
+    printf("---------------CADASTRO DO PRODUTO----------------\n");
     printf("Codigo unico: ");
     if (scanf("%d", &codigo) != 1) {
         printf("Entrada invalida.\n");
@@ -295,12 +314,12 @@ void cadastra_produto(produto *cabeca) {
         free(novo);
         return;
     }
-    printf("----------------\n");
+    printf("---------------------------------------------\n");
 
     novo->prox = cabeca->prox;
     cabeca->prox = novo;
 
-    printf("**Produto cadastrado com sucesso!**\n");
+    printf("**Produto cadastrado com sucesso!**\n\n");
     Sleep(1500);
 }
 
@@ -314,33 +333,17 @@ void lista_produtos(produto *cabeca){
     produto *aux = cabeca->prox;
 
     printf(" \n");
-    printf("----LISTA DE PRODUTOS CADASTRADOS----\n"); //arrumar
+    printf("----------LISTA DE PRODUTOS CADASTRADOS----------\n"); 
     while(aux != NULL){
         printf("-> Codigo: %d\n", aux->cod_unico);
         printf("-> Nome: %s\n", aux->nome);  
         printf("-> Preco unitario: R$ %.2f\n", aux->preco);  
         printf("-> Quantidade: %d\n", aux->quant);
-        printf("----------------------------\n"); //arrumar
+        printf("-------------------------------------------------\n");
         printf(" \n");
         aux = aux->prox;
     }
-}
-
-
-void libera_lista_produtos(produto *cabeca) {
-    if (cabeca == NULL) return;
-
-    produto *aux = cabeca;
-    while (aux != NULL) {
-        produto *temp = aux;
-        aux = aux->prox;
-
-        if (temp->nome != NULL) {
-            free(temp->nome);
-        }
-
-        free(temp);
-    }
+    printf(" \n");
 }
 
 
@@ -360,6 +363,106 @@ produto* buscar_produto(produto *cabeca, int codigo) {
 }
 
 
+void edita_produto(produto *cabeca) {
+    if (cabeca == NULL || cabeca->prox == NULL) {
+        printf("Nenhum produto cadastrado.\n");
+        return;
+    }
+
+    int codigo;
+    char buffer[100];
+    int opcao;
+
+    printf("\nCodigo do produto que deseja editar: ");
+    if (scanf("%d", &codigo) != 1) {
+        printf("Codigo invalido.\n");
+        limpar_buffer();
+        return;
+    }
+    limpar_buffer();
+
+    produto *p = buscar_produto(cabeca, codigo);
+
+    if (p == NULL) {
+        printf("Produto nao encontrado.\n");
+        return;
+    }
+
+    do {
+        printf("\n-------- EDITAR PRODUTO --------\n");
+        printf("Codigo: %d\n", p->cod_unico);
+        printf("Nome: %s\n", p->nome);
+        printf("Preco: R$ %.2f\n", p->preco);
+        printf("Quantidade: %d\n", p->quant);
+        printf("--------------------------------\n");
+        printf("(1) Alterar nome\n");
+        printf("(2) Alterar preco\n");
+        printf("(3) Alterar quantidade\n");
+        printf("(0) Voltar\n");
+        printf("Escolha: ");
+
+        if (scanf("%d", &opcao) != 1) {
+            limpar_buffer();
+            printf("Opcao invalida.\n");
+            continue;
+        }
+        limpar_buffer();
+
+        switch (opcao) {
+            case 1: {
+                printf("Novo nome: ");
+                scanf(" %99[^\n]", buffer);
+
+                char *novo_nome = malloc(strlen(buffer) + 1);
+                if (novo_nome == NULL) {
+                    printf("Erro de memoria.\n");
+                    return;
+                }
+
+                strcpy(novo_nome, buffer);
+                free(p->nome);
+                p->nome = novo_nome;
+
+                printf("Nome atualizado com sucesso!\n");
+                Sleep(1000);
+                break;
+            }
+
+            case 2:
+                printf("Novo preco: ");
+                if (scanf("%f", &p->preco) != 1 || p->preco < 0) {
+                    printf("Preco invalido.\n");
+                    limpar_buffer();
+                } else {
+                    printf("Preco atualizado com sucesso!\n");
+                }
+                Sleep(1000);
+                break;
+
+            case 3:
+                printf("Nova quantidade: ");
+                if (scanf("%d", &p->quant) != 1 || p->quant < 0) {
+                    printf("Quantidade invalida.\n");
+                    limpar_buffer();
+                } else {
+                    printf("Quantidade atualizada com sucesso!\n");
+                }
+                Sleep(1000);
+                break;
+
+            case 0:
+                printf("Retornando ao menu...\n");
+                Sleep(1000);
+                break;
+
+            default:
+                printf("Opcao invalida.\n");
+        }
+
+    } while (opcao != 0);
+}
+
+
 void remove_produto(produto *cabeca, int codigo) {
     produto *ant = cabeca;
     produto *atual = cabeca->prox;
@@ -373,42 +476,61 @@ void remove_produto(produto *cabeca, int codigo) {
         ant->prox = atual->prox;
         free(atual->nome);
         free(atual);
-        printf("Produto removido!\n");
+        printf("->Produto removido!\n\n");
     } else {
-        printf("Produto nao encontrado.\n");
+        printf("->Produto nao encontrado.\n\n\n");
     }
 }
 
 
-void menu_produtos(produto *cabeca_produtos) { 
-    int opcao = -1;
+void menu_produtos(){
+    produto *lista = cria_lista_produtos();
+    int opcao=-1;
 
     while (opcao != 0) {
-        printf("\n1-Cadastrar 2-Listar 3-Buscar 4-Remover 0-Sair: ");
+        printf("==========GERENCIAMENTO DE PRODUTOS==========\n\n");
+        printf("->(1) Cadastrar produto\n");
+        printf("->(2) Listar produtos cadastrados\n");
+        printf("->(3) Buscar produto cadastrado\n");
+        printf("->(4) Editar produto cadastrado\n");
+        printf("->(5) Remover produto cadastrado\n");
+        printf("->(0) Retorna ao menu principal (AINDA EM DESENVOLVIMENTO)\n\n");
+        printf("=============================================\n");
+        printf("Escolha a opcao: ");
         if (scanf("%d", &opcao) != 1) {
             limpar_buffer();
             continue;
         }
 
         switch (opcao) {
-            case 1: cadastra_produto(cabeca_produtos); break;
-            case 2: lista_produtos(cabeca_produtos); break;
+            case 1: 
+                cadastra_produto(lista);
+                break;
+            case 2: 
+                lista_produtos(lista);
+                Sleep(2000);
+                break;
             case 3: {
                 int c;
-                printf("Cod: "); scanf("%d", &c);
-                produto *p = buscar_produto(cabeca_produtos, c);
-                if(p) printf("Achou: %s\n", p->nome);
-                else printf("Nao achou.\n");
+                printf("\nCodigo a ser pesquisado: "); scanf("%d", &c);
+                produto *p = buscar_produto(lista, c);
+                if(p) printf("*Produto encontrado!\n->Nome do produto: %s\n\n", p->nome);
+                else printf("*Produto nao encontrado.\n\n");
+                Sleep(2000);
                 break;
             }
-            case 4: {
+            case 4:
+                edita_produto(lista);
+                break;
+            case 5: {
                 int c;
-                printf("Cod p/ remover: "); scanf("%d", &c);
-                remove_produto(cabeca_produtos, c);
+                printf("\n*Codigo para remocao: "); scanf("%d", &c);
+                remove_produto(lista, c);
                 break;
             }
         }
     }
+    libera_lista_produtos(lista);
 }
 
 ///////////////////////////////////////////////

@@ -4,8 +4,8 @@
 #include "structs.h"
 
 int main() {
-    
-   menu_inicial();
+   menu_produtos(); //temporário
+   menu_inicial(); //temporário
    
     cliente *lista_clientes = cria_lista_clientes();
     produto *lista_produtos = cria_lista_produtos();

@@ -16,13 +16,14 @@ cliente* buscar_cliente(cliente *cabeca, char *cpf);
 void atualizar_dados_cliente(cliente *cabeca, char *cpf);
 
 produto* cria_lista_produtos();
+void libera_lista_produtos(produto *cabeca);
 void limpar_buffer();
 void cadastra_produto(produto *cabeca);
 void lista_produtos(produto *cabeca);
-void libera_lista_produtos(produto *cabeca);
 produto* buscar_produto(produto *cabeca, int codigo);
+void edita_produto(produto *cabeca);
 void remove_produto(produto *cabeca, int codigo);
-void menu_produtos(produto *cabeca);
+void menu_produtos();
 
 carrinho* cria_lista_carrinhos();
 void menu_compra(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *cabeca_produtos);
