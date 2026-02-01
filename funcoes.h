@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include "structs.h"
 
-// aqui definimos as assinaturas das funções que usaremos
 void menu_inicial();
 
 cliente* cria_lista_clientes();
@@ -16,8 +15,13 @@ void liberar_lista_clientes(cliente *cabeca);
 cliente* buscar_cliente(cliente *cabeca, char *cpf);
 void atualizar_dados_cliente(cliente *cabeca, char *cpf);
 
-produto* cria_lista();
+produto* cria_lista_produtos();
+void limpar_buffer();
 void cadastra_produto(produto *cabeca);
-
+void lista_produtos(produto *cabeca);
+void libera_lista_produtos(produto *cabeca);
+produto* buscar_produto(produto *cabeca, int codigo);
+void remove_produto(produto *cabeca, int codigo);
+void menu_produtos(produto *cabeca);
 
 #endif

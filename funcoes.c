@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <windows.h>
 #include "funcoes.h"
 #include "structs.h"
 
@@ -31,10 +32,10 @@ void menu_inicial(){
 
     while(i!=0){
         switch(i){
-            case 1:
+            case 1:{
                 int x = cadastra_cliente(cabeca);
                 break;
-
+            }
             case 2:
                 listar_clientes(cabeca);
                 break;
@@ -215,7 +216,7 @@ void atualizar_dados_cliente(cliente *cabeca, char *cpf){
 
 ///////////////////////////////////////////////
 
-produto* cria_lista() {
+produto* cria_lista_produtos() {
     produto *cabeca = calloc(1, sizeof(produto));
     if (cabeca == NULL) {
         printf("Erro de memoria.\n");
@@ -229,16 +230,23 @@ produto* cria_lista() {
     return cabeca;
 }
 
+void limpar_buffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
 void cadastra_produto(produto *cabeca) {
     if (cabeca == NULL) return;
 
     char buffer[100];
     int codigo;
 
+    printf(" \n");
     printf("-----CADASTRO DO PRODUTO-----\n");
     printf("Codigo unico: ");
     if (scanf("%d", &codigo) != 1) {
         printf("Entrada invalida.\n");
+        limpar_buffer();
         return;
     }
 
@@ -270,9 +278,10 @@ void cadastra_produto(produto *cabeca) {
     }
     strcpy(novo->nome, buffer);
 
-    printf("Preco: ");
+    printf("Preco unitario: ");
     if (scanf("%f", &novo->preco) != 1) {
         printf("Entrada invalida.\n");
+        limpar_buffer();
         free(novo->nome);
         free(novo);
         return;
@@ -281,14 +290,124 @@ void cadastra_produto(produto *cabeca) {
     printf("Quantidade: ");
     if (scanf("%d", &novo->quant) != 1) {
         printf("Entrada invalida.\n");
+        limpar_buffer();
         free(novo->nome);
         free(novo);
         return;
     }
+    printf("----------------\n");
 
     novo->prox = cabeca->prox;
     cabeca->prox = novo;
 
-    printf("Produto cadastrado com sucesso!\n");
-    // adicionar um sleep e exit para ficar mais bonito
+    printf("**Produto cadastrado com sucesso!**\n");
+    Sleep(1500);
+}
+
+
+void lista_produtos(produto *cabeca){
+    if (cabeca == NULL ||cabeca->prox ==NULL){
+    printf("Nenhum produto cadastrado.\n");
+    return;
+    }
+
+    produto *aux = cabeca->prox;
+
+    printf(" \n");
+    printf("----LISTA DE PRODUTOS CADASTRADOS----\n"); //arrumar
+    while(aux != NULL){
+        printf("-> Codigo: %d\n", aux->cod_unico);
+        printf("-> Nome: %s\n", aux->nome);  
+        printf("-> Preco unitario: R$ %.2f\n", aux->preco);  
+        printf("-> Quantidade: %d\n", aux->quant);
+        printf("----------------------------\n"); //arrumar
+        printf(" \n");
+        aux = aux->prox;
+    }
+}
+
+
+void libera_lista_produtos(produto *cabeca) {
+    if (cabeca == NULL) return;
+
+    produto *aux = cabeca;
+    while (aux != NULL) {
+        produto *temp = aux;
+        aux = aux->prox;
+
+        if (temp->nome != NULL) {
+            free(temp->nome);
+        }
+
+        free(temp);
+    }
+}
+
+
+produto* buscar_produto(produto *cabeca, int codigo) {
+    if (cabeca == NULL) return NULL;
+
+    produto *aux = cabeca->prox;
+
+    while (aux != NULL) {
+        if (aux->cod_unico == codigo) {
+            return aux;
+        }
+        aux = aux->prox;
+    }
+
+    return NULL;
+}
+
+
+void remove_produto(produto *cabeca, int codigo) {
+    produto *ant = cabeca;
+    produto *atual = cabeca->prox;
+
+    while (atual != NULL && atual->cod_unico != codigo) {
+        ant = atual;
+        atual = atual->prox;
+    }
+
+    if (atual != NULL) {
+        ant->prox = atual->prox;
+        free(atual->nome);
+        free(atual);
+        printf("Produto removido!\n");
+    } else {
+        printf("Produto nao encontrado.\n");
+    }
+}
+
+void menu_produtos(){
+    produto *lista = cria_lista_produtos();
+    int opcao = -1;
+
+    while (opcao != 0) {
+        printf("\n1-Cadastrar 2-Listar 3-Buscar 4-Remover 0-Sair: ");
+        if (scanf("%d", &opcao) != 1) {
+            limpar_buffer();
+            continue;
+        }
+
+        switch (opcao) {
+            case 1: cadastra_produto(lista); break;
+            case 2: lista_produtos(lista); break;
+            case 3: {
+                int c;
+                printf("Cod: "); scanf("%d", &c);
+                produto *p = buscar_produto(lista, c);
+                if(p) printf("Achou: %s\n", p->nome);
+                else printf("Nao achou.\n");
+                break;
+            }
+            case 4: {
+                int c;
+                printf("Cod p/ remover: "); scanf("%d", &c);
+                remove_produto(lista, c);
+                break;
+            }
+        }
+    }
+    libera_lista_produtos(lista);
 }
