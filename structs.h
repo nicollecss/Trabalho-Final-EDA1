@@ -19,6 +19,18 @@ typedef struct Produto{
     struct Produto *prox;
 } produto;
 
+typedef struct ItemCarrinho {
+    int cod_produto;
+    int quantidade;
+    struct ItemCarrinho *prox;
+} item_carrinho;
+
+typedef struct Carrinho {
+    char cpf_cliente[50];
+    item_carrinho *itens; // Cabeça da lista de itens deste carrinho
+    struct Carrinho *prox;
+} carrinho;
+
 #endif
 
 

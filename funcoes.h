@@ -24,4 +24,11 @@ produto* buscar_produto(produto *cabeca, int codigo);
 void remove_produto(produto *cabeca, int codigo);
 void menu_produtos(produto *cabeca);
 
+carrinho* cria_lista_carrinhos();
+void menu_compra(carrinho *cabeca_c, cliente *cabeca_cli, produto *cabeca_p);
+carrinho* buscar_carrinho(carrinho *cabeca, char *cpf);
+void adicionar_item(carrinho *cabeca_c, cliente *cabeca_cli, produto *cabeca_p);
+void listar_carrinho_cliente(carrinho *cabeca_c, produto *cabeca_p);
+void remover_item_carrinho(carrinho *cabeca_c, produto *cabeca_p);
+void libera_lista_carrinhos(carrinho *cabeca);
 #endif
