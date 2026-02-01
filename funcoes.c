@@ -379,8 +379,8 @@ void remove_produto(produto *cabeca, int codigo) {
     }
 }
 
-void menu_produtos(){
-    produto *lista = cria_lista_produtos();
+
+void menu_produtos(produto *cabeca_produtos) { 
     int opcao = -1;
 
     while (opcao != 0) {
@@ -391,12 +391,12 @@ void menu_produtos(){
         }
 
         switch (opcao) {
-            case 1: cadastra_produto(lista); break;
-            case 2: lista_produtos(lista); break;
+            case 1: cadastra_produto(cabeca_produtos); break;
+            case 2: lista_produtos(cabeca_produtos); break;
             case 3: {
                 int c;
                 printf("Cod: "); scanf("%d", &c);
-                produto *p = buscar_produto(lista, c);
+                produto *p = buscar_produto(cabeca_produtos, c);
                 if(p) printf("Achou: %s\n", p->nome);
                 else printf("Nao achou.\n");
                 break;
@@ -404,10 +404,189 @@ void menu_produtos(){
             case 4: {
                 int c;
                 printf("Cod p/ remover: "); scanf("%d", &c);
-                remove_produto(lista, c);
+                remove_produto(cabeca_produtos, c);
                 break;
             }
         }
     }
-    libera_lista_produtos(lista);
+}
+
+///////////////////////////////////////////////
+carrinho* cria_lista_carrinhos() {
+    carrinho *cabeca_carrinhos = calloc(1, sizeof(carrinho));
+    if(cabeca_carrinhos == NULL) return NULL;
+    cabeca_carrinhos->prox = NULL;
+    return cabeca_carrinhos;
+}
+
+void adicionar_item_carrinho(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *cabeca_produtos) {
+    char cpf_busca[50];
+    int codigo_busca, quantidade_desejada;
+
+    printf("Digite o CPF do cliente: ");
+    scanf(" %[^\n]", cpf_busca);
+
+    if (buscar_cliente(cabeca_clientes, cpf_busca) == NULL) {
+        printf("Erro: Cliente nao encontrado!\n");
+        return;
+    }
+
+    printf("Digite o codigo unico do produto: ");
+    scanf("%d", &codigo_busca);
+    produto *produto_alvo = buscar_produto(cabeca_produtos, codigo_busca);
+
+    if (produto_alvo == NULL) {
+        printf("Erro: Produto nao encontrado!\n");
+        return;
+    }
+
+    printf("Quantidade: ");
+    scanf("%d", &quantidade_desejada);
+
+    if (quantidade_desejada > produto_alvo->quant) {
+        printf("Erro: Estoque insuficiente! (Disponivel: %d)\n", produto_alvo->quant);
+        return;
+    }
+
+    carrinho *navegador_carrinhos = cabeca_carrinhos->prox;
+    carrinho *carrinho_do_cliente = NULL;
+
+    while(navegador_carrinhos != NULL) {
+        if(strcmp(navegador_carrinhos->cpf, cpf_busca) == 0) {
+            carrinho_do_cliente = navegador_carrinhos;
+            break;
+        }
+        navegador_carrinhos = navegador_carrinhos->prox;
+    }
+
+    if (carrinho_do_cliente == NULL) {
+        carrinho_do_cliente = calloc(1, sizeof(carrinho));
+        strcpy(carrinho_do_cliente->cpf, cpf_busca);
+        carrinho_do_cliente->prox = cabeca_carrinhos->prox;
+        cabeca_carrinhos->prox = carrinho_do_cliente;
+    }
+
+    item_carrinho *novo_item = calloc(1, sizeof(item_carrinho));
+    novo_item->cod_unico = codigo_busca;
+    novo_item->quantidade = quantidade_desejada;
+    novo_item->prox = carrinho_do_cliente->itens;
+    carrinho_do_cliente->itens = novo_item;
+
+    produto_alvo->quant -= quantidade_desejada; // Baixa no estoque
+    printf("Item adicionado com sucesso!\n");
+}
+
+void listar_carrinho_cliente(carrinho *cabeca_carrinhos, produto *cabeca_produtos) {
+    char cpf_busca[50];
+    printf("Digite o CPF para consultar o carrinho: ");
+    scanf(" %[^\n]", cpf_busca);
+
+    carrinho *atual_carrinho = cabeca_carrinhos->prox;
+    while(atual_carrinho != NULL && strcmp(atual_carrinho->cpf, cpf_busca) != 0) {
+        atual_carrinho = atual_carrinho->prox;
+    }
+
+    if (atual_carrinho == NULL || atual_carrinho->itens == NULL) {
+        printf("Carrinho vazio para este cliente.\n");
+        return;
+    }
+
+    float valor_total_compra = 0;
+    int total_itens = 0;
+    item_carrinho *item_navegador = atual_carrinho->itens;
+
+    printf("\n--- CARRINHO DO CPF: %s ---\n", cpf_busca);
+    while(item_navegador != NULL) {
+        produto *info_produto = buscar_produto(cabeca_produtos, item_navegador->cod_unico);
+        if(info_produto != NULL) {
+            float subtotal = info_produto->preco * item_navegador->quantidade;
+            printf("Cod: %d | Produto: %s | Qtd: %d | Subtotal: R$ %.2f\n", 
+                    info_produto->cod_unico, info_produto->nome, item_navegador->quantidade, subtotal);
+            valor_total_compra += subtotal;
+            total_itens += item_navegador->quantidade;
+        }
+        item_navegador = item_navegador->prox;
+    }
+    printf("TOTAL DE ITENS: %d | VALOR TOTAL: R$ %.2f\n--------------------------\n", total_itens, valor_total_compra);
+}
+
+void remover_item_carrinho(carrinho *cabeca_carrinhos, produto *cabeca_produtos) {
+    char cpf_busca[50];
+    int codigo_remover;
+
+    printf("CPF do cliente: ");
+    scanf(" %[^\n]", cpf_busca);
+
+    carrinho *atual_carrinho = cabeca_carrinhos->prox;
+    while(atual_carrinho != NULL && strcmp(atual_carrinho->cpf, cpf_busca) != 0) {
+        atual_carrinho = atual_carrinho->prox;
+    }
+
+    if (atual_carrinho == NULL || atual_carrinho->itens == NULL) {
+        printf("Nenhum item encontrado no carrinho deste cliente.\n");
+        return;
+    }
+
+    printf("Digite o codigo do produto para remover: ");
+    scanf("%d", &codigo_remover);
+
+    item_carrinho *anterior_item = NULL;
+    item_carrinho *atual_item = atual_carrinho->itens;
+
+    while (atual_item != NULL && atual_item->cod_unico != codigo_remover) {
+        anterior_item = atual_item;
+        atual_item = atual_item->prox;
+    }
+
+    if (atual_item == NULL) {
+        printf("Produto nao esta no carrinho.\n");
+        return;
+    }
+
+    // Devolve a quantidade ao estoque antes de deletar
+    produto *produto_estoque = buscar_produto(cabeca_produtos, atual_item->cod_unico);
+    if (produto_estoque != NULL) {
+        produto_estoque->quant += atual_item->quantidade;
+    }
+
+    // Ajusta os ponteiros da lista interna de itens
+    if (anterior_item == NULL) {
+        atual_carrinho->itens = atual_item->prox;
+    } else {
+        anterior_item->prox = atual_item->prox;
+    }
+
+    free(atual_item);
+    printf("Produto removido e estoque atualizado!\n");
+}
+
+void libera_lista_carrinhos(carrinho *cabeca_carrinhos) {
+    carrinho *carrinho_auxiliar = cabeca_carrinhos;
+    while(carrinho_auxiliar != NULL) {
+        item_carrinho *item_auxiliar = carrinho_auxiliar->itens;
+        while(item_auxiliar != NULL) {
+            item_carrinho *item_para_liberar = item_auxiliar;
+            item_auxiliar = item_auxiliar->prox;
+            free(item_para_liberar);
+        }
+        carrinho *carrinho_para_liberar = carrinho_auxiliar;
+        carrinho_auxiliar = carrinho_auxiliar->prox;
+        free(carrinho_para_liberar);
+    }
+}
+
+void menu_compra(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *cabeca_produtos) {
+    int escolha_usuario = -1;
+    while(escolha_usuario != 0) {
+        printf("\n--- MODO COMPRA ---\n(1) Incluir no Carrinho\n(2) Listar Carrinho\n(3) Remover do Carrinho\n(0) Voltar\nEscolha: ");
+        scanf("%d", &escolha_usuario);
+
+        switch(escolha_usuario) {
+            case 1: adicionar_item_carrinho(cabeca_carrinhos, cabeca_clientes, cabeca_produtos); break;
+            case 2: listar_carrinho_cliente(cabeca_carrinhos, cabeca_produtos); break;
+            case 3: remover_item_carrinho(cabeca_carrinhos, cabeca_produtos); break;
+            case 0: break;
+            default: printf("Opcao invalida.\n");
+        }
+    }
 }
