@@ -6,8 +6,7 @@
 #include "funcoes.h"
 #include "structs.h"
 
-void menu_inicial(){
-    /*
+/*
     cliente *cabeca = cria_lista_clientes();
     char cpf[12];
     int x = cadastra_cliente(cabeca);
@@ -22,49 +21,35 @@ void menu_inicial(){
 
     liberar_lista_clientes(cabeca);
     */
-    
-    cliente *cabeca = cria_lista_clientes();
-    int i=-1;
-    char cpf[12];
 
-    printf("CLIENTES\n(1) Cadastrar novo cliente\n(2) Listar clientes\n(3) Buscar cliente pelo CPF\n(4) Atualizar dados de cliente\n(0) Encerrar o programa\n");
-    scanf("%d",&i);
+void main_sistema() {
+    // Inicializa as listas uma única vez através das funções de criação
+    cliente *lista_clientes = cria_lista_clientes();
+    produto *lista_produtos = cria_lista_produtos();
+    carrinho *lista_carrinhos = cria_lista_carrinhos();
 
-    while(i!=0){
-        switch(i){
-            case 1:{
-                int x = cadastra_cliente(cabeca);
-                break;
-            }
-            case 2:
-                listar_clientes(cabeca);
-                break;
+    int opcao_principal = -1;
+    while(opcao_principal != 0) {
+        printf("\n=== SISTEMA DA LOJA ===\n");
+        printf("1- Clientes\n2- Produtos\n3- Modo Compra\n0- Sair\nEscolha: ");
+        scanf("%d", &opcao_principal);
 
-            case 3:
-                printf("Digite o cpf a ser buscado (somente numeros): ");
-                scanf(" %[^\n]",cpf);
-
-                cliente *c = buscar_cliente(cabeca, cpf);
-                if(c!=NULL) printf("cliente encontrado: %s\n", c->nome);
-                else printf("cliente nao encontrado!\n");
-                break;
-
-            case 4:
-                printf("Digite o cpf do cliente que voce deseja atualizar os dados (somente numeros): ");
-                scanf(" %[^\n]",cpf);
-
-                atualizar_dados_cliente(cabeca, cpf);
-                break;
-
-            case 0:
-                liberar_lista_clientes(cabeca);
-                return;
+        switch(opcao_principal) {
+            case 1: menu_clientes(lista_clientes); break; 
+            case 2: menu_produtos(lista_produtos); break; 
+            case 3: menu_compra(lista_carrinhos, lista_clientes, lista_produtos); break;
+            case 0: printf("Encerrando o sistema...\n"); break;
+            default: printf("Opcao invalida!\n"); break;
         }
-
-        printf("\nCLIENTES\n(1) Cadastrar novo cliente\n(2) Listar clientes\n(3) Buscar cliente pelo CPF\n(4) Atualizar dados de cliente\n(0) Encerrar o programa\n");
-        scanf("%d",&i);
     }
+
+   
+    liberar_lista_clientes(lista_clientes);
+    libera_lista_produtos(lista_produtos);
+    libera_lista_carrinhos(lista_carrinhos);
 }
+
+ //////////////////////////////////////////////   
 
 cliente* cria_lista_clientes(){
     cliente *cabeca = calloc(1, sizeof(cliente));
@@ -213,6 +198,88 @@ void atualizar_dados_cliente(cliente *cabeca, char *cpf){
     return;
 }
 
+void remover_cliente(cliente *cabeca, char *cpf) {
+    cliente *ant = cabeca;
+    cliente *atual = cabeca->prox;
+    while (atual != NULL && strcmp(atual->cpf, cpf) != 0) {
+        ant = atual;
+        atual = atual->prox;
+    }
+    if (atual != NULL) {
+        ant->prox = atual->prox;
+        free(atual);
+        printf("Cliente removido com sucesso!\n");
+    } else {
+        printf("Cliente nao encontrado.\n");
+    }
+}
+
+void menu_clientes(cliente *cabeca) { 
+    int i = -1;
+    char cpf[50];
+
+    while(i != 0) {
+        printf("\n--- GERENCIAMENTO DE CLIENTES ---\n");
+        printf("(1) Cadastrar novo cliente\n");
+        printf("(2) Listar clientes\n");
+        printf("(3) Buscar cliente pelo CPF\n");
+        printf("(4) Atualizar dados de cliente\n");
+        printf("(5) Remover cliente\n"); 
+        printf("(0) Voltar ao menu principal\n");
+        printf("Escolha uma opcao: ");
+        
+        if (scanf("%d", &i) != 1) {
+            limpar_buffer();
+            continue;
+        }
+
+        switch(i) {
+            case 1:
+                cadastra_cliente(cabeca);
+                Sleep(1500);
+                break;
+            case 2:
+                listar_clientes(cabeca);
+                Sleep(3000);
+                break;
+            case 3:
+                // Correção: Solicitando o CPF antes de buscar
+                printf("Digite o CPF para buscar (somente numeros): ");
+                scanf(" %[^\n]", cpf);
+                
+                cliente *c = buscar_cliente(cabeca, cpf);
+                if(c != NULL) {
+                    printf("\nCliente encontrado!\n");
+                    printf("Nome: %s\n", c->nome);
+                    printf("Email: %s\n", c->email);
+                } else {
+                    printf("\nCliente nao encontrado.\n");
+                }
+                Sleep(2000);
+                break;
+            case 4:
+                printf("Digite o CPF para atualizar: ");
+                scanf(" %[^\n]", cpf);
+                atualizar_dados_cliente(cabeca, cpf);
+                Sleep(2000);
+                break;
+            case 5:
+                printf("Digite o CPF para remover: ");
+                scanf(" %[^\n]", cpf);
+                remover_cliente(cabeca, cpf);
+                Sleep(2000);
+                break;
+            case 0:
+                printf("Retornando...\n");
+                Sleep(1000);
+                break;
+            default:
+                printf("Opcao invalida!\n");
+                Sleep(1000);
+                break;
+        }
+    }
+}
 
 ///////////////////////////////////////////////
 
@@ -230,7 +297,6 @@ produto* cria_lista_produtos() {
     return cabeca;
 }
 
-
 void libera_lista_produtos(produto *cabeca) {
     if (cabeca == NULL) return;
 
@@ -247,12 +313,10 @@ void libera_lista_produtos(produto *cabeca) {
     }
 }
 
-
 void limpar_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
-
 
 void cadastra_produto(produto *cabeca) {
     if (cabeca == NULL) return;
@@ -323,7 +387,6 @@ void cadastra_produto(produto *cabeca) {
     Sleep(1500);
 }
 
-
 void lista_produtos(produto *cabeca){
     if (cabeca == NULL ||cabeca->prox ==NULL){
     printf("Nenhum produto cadastrado.\n");
@@ -346,7 +409,6 @@ void lista_produtos(produto *cabeca){
     printf(" \n");
 }
 
-
 produto* buscar_produto(produto *cabeca, int codigo) {
     if (cabeca == NULL) return NULL;
 
@@ -361,7 +423,6 @@ produto* buscar_produto(produto *cabeca, int codigo) {
 
     return NULL;
 }
-
 
 void edita_produto(produto *cabeca) {
     if (cabeca == NULL || cabeca->prox == NULL) {
@@ -462,7 +523,6 @@ void edita_produto(produto *cabeca) {
     } while (opcao != 0);
 }
 
-
 void remove_produto(produto *cabeca, int codigo) {
     produto *ant = cabeca;
     produto *atual = cabeca->prox;
@@ -482,9 +542,7 @@ void remove_produto(produto *cabeca, int codigo) {
     }
 }
 
-
-void menu_produtos(){
-    produto *lista = cria_lista_produtos();
+void menu_produtos(produto *lista) {
     int opcao=-1;
 
     while (opcao != 0) {
@@ -530,10 +588,10 @@ void menu_produtos(){
             }
         }
     }
-    libera_lista_produtos(lista);
 }
 
 ///////////////////////////////////////////////
+
 carrinho* cria_lista_carrinhos() {
     carrinho *cabeca_carrinhos = calloc(1, sizeof(carrinho));
     if(cabeca_carrinhos == NULL) return NULL;
@@ -541,145 +599,131 @@ carrinho* cria_lista_carrinhos() {
     return cabeca_carrinhos;
 }
 
-void adicionar_item_carrinho(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *cabeca_produtos) {
-    char cpf_busca[50];
-    int codigo_busca, quantidade_desejada;
+void adicionar_item_carrinho(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *cabeca_produtos, char *cpf_cliente) {
+    int cod, qtd;
+    
+    // Busca o produto primeiro para saber se existe e tem estoque
+    printf("Digite o codigo do produto: ");
+    scanf("%d", &cod);
+    produto *p = buscar_produto(cabeca_produtos, cod);
 
-    printf("Digite o CPF do cliente: ");
-    scanf(" %[^\n]", cpf_busca);
-
-    if (buscar_cliente(cabeca_clientes, cpf_busca) == NULL) {
-        printf("Erro: Cliente nao encontrado!\n");
+    if (p == NULL) {
+        printf("[ERRO] Produto nao encontrado!\n");
         return;
     }
 
-    printf("Digite o codigo unico do produto: ");
-    scanf("%d", &codigo_busca);
-    produto *produto_alvo = buscar_produto(cabeca_produtos, codigo_busca);
+    printf("Digite a quantidade: ");
+    scanf("%d", &qtd);
 
-    if (produto_alvo == NULL) {
-        printf("Erro: Produto nao encontrado!\n");
+    if (p->quant < qtd) {
+        printf("[ERRO] Estoque insuficiente! (Disponivel: %d)\n", p->quant);
         return;
     }
 
-    printf("Quantidade: ");
-    scanf("%d", &quantidade_desejada);
-
-    if (quantidade_desejada > produto_alvo->quant) {
-        printf("Erro: Estoque insuficiente! (Disponivel: %d)\n", produto_alvo->quant);
-        return;
+    // Busca o carrinho do cliente usando o CPF recebido pelo menu
+    carrinho *c = cabeca_carrinhos->prox;
+    carrinho *anterior = cabeca_carrinhos;
+    while (c != NULL && strcmp(c->cpf, cpf_cliente) != 0) {
+        anterior = c;
+        c = c->prox;
     }
 
-    carrinho *navegador_carrinhos = cabeca_carrinhos->prox;
-    carrinho *carrinho_do_cliente = NULL;
-
-    while(navegador_carrinhos != NULL) {
-        if(strcmp(navegador_carrinhos->cpf, cpf_busca) == 0) {
-            carrinho_do_cliente = navegador_carrinhos;
-            break;
-        }
-        navegador_carrinhos = navegador_carrinhos->prox;
+    // Se o cliente ainda não tem carrinho, cria um novo
+    if (c == NULL) {
+        c = (carrinho*)malloc(sizeof(carrinho));
+        strcpy(c->cpf, cpf_cliente);
+        c->itens = NULL;
+        c->prox = NULL;
+        anterior->prox = c;
     }
 
-    if (carrinho_do_cliente == NULL) {
-        carrinho_do_cliente = calloc(1, sizeof(carrinho));
-        strcpy(carrinho_do_cliente->cpf, cpf_busca);
-        carrinho_do_cliente->prox = cabeca_carrinhos->prox;
-        cabeca_carrinhos->prox = carrinho_do_cliente;
-    }
+    // Adiciona o item na lista de itens do carrinho
+    item_carrinho *novo_item = (item_carrinho*)malloc(sizeof(item_carrinho));
+    novo_item->cod_unico = cod;
+    novo_item->quantidade = qtd;
+    novo_item->prox = c->itens;
+    c->itens = novo_item;
 
-    item_carrinho *novo_item = calloc(1, sizeof(item_carrinho));
-    novo_item->cod_unico = codigo_busca;
-    novo_item->quantidade = quantidade_desejada;
-    novo_item->prox = carrinho_do_cliente->itens;
-    carrinho_do_cliente->itens = novo_item;
-
-    produto_alvo->quant -= quantidade_desejada; // Baixa no estoque
+    // Atualiza o estoque do produto
+    p->quant -= qtd;
     printf("Item adicionado com sucesso!\n");
 }
 
-void listar_carrinho_cliente(carrinho *cabeca_carrinhos, produto *cabeca_produtos) {
-    char cpf_busca[50];
-    printf("Digite o CPF para consultar o carrinho: ");
-    scanf(" %[^\n]", cpf_busca);
-
-    carrinho *atual_carrinho = cabeca_carrinhos->prox;
-    while(atual_carrinho != NULL && strcmp(atual_carrinho->cpf, cpf_busca) != 0) {
-        atual_carrinho = atual_carrinho->prox;
+void listar_carrinho_cliente(carrinho *cabeca_carrinhos, produto *cabeca_produtos, char *cpf_cliente) {
+    carrinho *c = cabeca_carrinhos->prox;
+    while (c != NULL && strcmp(c->cpf, cpf_cliente) != 0) {
+        c = c->prox;
     }
 
-    if (atual_carrinho == NULL || atual_carrinho->itens == NULL) {
-        printf("Carrinho vazio para este cliente.\n");
+    if (c == NULL || c->itens == NULL) {
+        printf("\nO carrinho do cliente %s esta vazio.\n", cpf_cliente);
         return;
     }
 
-    float valor_total_compra = 0;
+    float total_geral = 0;
     int total_itens = 0;
-    item_carrinho *item_navegador = atual_carrinho->itens;
-
-    printf("\n--- CARRINHO DO CPF: %s ---\n", cpf_busca);
-    while(item_navegador != NULL) {
-        produto *info_produto = buscar_produto(cabeca_produtos, item_navegador->cod_unico);
-        if(info_produto != NULL) {
-            float subtotal = info_produto->preco * item_navegador->quantidade;
-            printf("Cod: %d | Produto: %s | Qtd: %d | Subtotal: R$ %.2f\n", 
-                    info_produto->cod_unico, info_produto->nome, item_navegador->quantidade, subtotal);
-            valor_total_compra += subtotal;
-            total_itens += item_navegador->quantidade;
+    printf("\n--- ITENS NO CARRINHO (CPF: %s) ---\n", cpf_cliente);
+    
+    item_carrinho *atual = c->itens;
+    while (atual != NULL) {
+        produto *p = buscar_produto(cabeca_produtos, atual->cod_unico);
+        if (p != NULL) {
+            float subtotal = p->preco * atual->quantidade;
+            printf("Produto: %s | Qtd: %d | Preco Un: R$%.2f | Subtotal: R$%.2f\n", 
+                    p->nome, atual->quantidade, p->preco, subtotal);
+            total_geral += subtotal;
+            total_itens += atual->quantidade;
         }
-        item_navegador = item_navegador->prox;
+        atual = atual->prox;
     }
-    printf("TOTAL DE ITENS: %d | VALOR TOTAL: R$ %.2f\n--------------------------\n", total_itens, valor_total_compra);
+    printf("---------------------------------------------\n");
+    printf("TOTAL DE ITENS: %d\n", total_itens);
+    printf("VALOR TOTAL DA COMPRA: R$ %.2f\n", total_geral);
 }
 
-void remover_item_carrinho(carrinho *cabeca_carrinhos, produto *cabeca_produtos) {
-    char cpf_busca[50];
-    int codigo_remover;
-
-    printf("CPF do cliente: ");
-    scanf(" %[^\n]", cpf_busca);
-
-    carrinho *atual_carrinho = cabeca_carrinhos->prox;
-    while(atual_carrinho != NULL && strcmp(atual_carrinho->cpf, cpf_busca) != 0) {
-        atual_carrinho = atual_carrinho->prox;
+void remover_item_carrinho(carrinho *cabeca_carrinhos, produto *cabeca_produtos, char *cpf_cliente) {
+    carrinho *c = cabeca_carrinhos->prox;
+    while (c != NULL && strcmp(c->cpf, cpf_cliente) != 0) {
+        c = c->prox;
     }
 
-    if (atual_carrinho == NULL || atual_carrinho->itens == NULL) {
-        printf("Nenhum item encontrado no carrinho deste cliente.\n");
+    if (c == NULL || c->itens == NULL) {
+        printf("Carrinho vazio ou nao encontrado.\n");
         return;
     }
 
-    printf("Digite o codigo do produto para remover: ");
-    scanf("%d", &codigo_remover);
+    int cod;
+    printf("Digite o codigo do produto que deseja remover do carrinho: ");
+    scanf("%d", &cod);
 
-    item_carrinho *anterior_item = NULL;
-    item_carrinho *atual_item = atual_carrinho->itens;
+    item_carrinho *atual = c->itens;
+    item_carrinho *anterior = NULL;
 
-    while (atual_item != NULL && atual_item->cod_unico != codigo_remover) {
-        anterior_item = atual_item;
-        atual_item = atual_item->prox;
+    while (atual != NULL && atual->cod_unico != cod) {
+        anterior = atual;
+        atual = atual->prox;
     }
 
-    if (atual_item == NULL) {
-        printf("Produto nao esta no carrinho.\n");
+    if (atual == NULL) {
+        printf("Produto nao encontrado no carrinho.\n");
         return;
     }
 
-    // Devolve a quantidade ao estoque antes de deletar
-    produto *produto_estoque = buscar_produto(cabeca_produtos, atual_item->cod_unico);
-    if (produto_estoque != NULL) {
-        produto_estoque->quant += atual_item->quantidade;
+    // Devolve ao estoque
+    produto *p = buscar_produto(cabeca_produtos, cod);
+    if (p != NULL) {
+        p->quant += atual->quantidade;
     }
 
-    // Ajusta os ponteiros da lista interna de itens
-    if (anterior_item == NULL) {
-        atual_carrinho->itens = atual_item->prox;
+    // Remove da lista encadeada de itens
+    if (anterior == NULL) {
+        c->itens = atual->prox;
     } else {
-        anterior_item->prox = atual_item->prox;
+        anterior->prox = atual->prox;
     }
 
-    free(atual_item);
-    printf("Produto removido e estoque atualizado!\n");
+    free(atual);
+    printf("Produto removido e estoque atualizado com sucesso!\n");
 }
 
 void libera_lista_carrinhos(carrinho *cabeca_carrinhos) {
@@ -698,17 +742,66 @@ void libera_lista_carrinhos(carrinho *cabeca_carrinhos) {
 }
 
 void menu_compra(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *cabeca_produtos) {
-    int escolha_usuario = -1;
-    while(escolha_usuario != 0) {
-        printf("\n--- MODO COMPRA ---\n(1) Incluir no Carrinho\n(2) Listar Carrinho\n(3) Remover do Carrinho\n(0) Voltar\nEscolha: ");
-        scanf("%d", &escolha_usuario);
+    char cpf_atual[50];
+    int escolha_usuario;
+    int continuar_no_cpf;
 
-        switch(escolha_usuario) {
-            case 1: adicionar_item_carrinho(cabeca_carrinhos, cabeca_clientes, cabeca_produtos); break;
-            case 2: listar_carrinho_cliente(cabeca_carrinhos, cabeca_produtos); break;
-            case 3: remover_item_carrinho(cabeca_carrinhos, cabeca_produtos); break;
-            case 0: break;
-            default: printf("Opcao invalida.\n");
+    while (1) {
+        printf("\n================ MODO COMPRA ================\n");
+        printf("Digite o CPF do cliente para acessar o carrinho\n");
+        printf("(ou digite '0' para voltar ao menu principal): ");
+        scanf(" %[^\n]", cpf_atual);
+
+        // Se digitar 0, sai do modo compra
+        if (strcmp(cpf_atual, "0") == 0) {
+            printf("Retornando ao menu principal...\n");
+            Sleep(1000);
+            break;
+        }
+
+        // Verifica se o cliente existe antes de prosseguir
+        if (buscar_cliente(cabeca_clientes, cpf_atual) == NULL) {
+            printf("\n[ERRO] Cliente nao cadastrado! Cadastre o cliente primeiro.\n");
+            Sleep(2000);
+            continue;
+        }
+
+        continuar_no_cpf = 1;
+        while (continuar_no_cpf) {
+            printf("\n--- CARRINHO DO CLIENTE: %s ---\n", cpf_atual);
+            printf("(1) Incluir Produto\n");
+            printf("(2) Listar Itens / Valor Total\n");
+            printf("(3) Remover Produto\n");
+            printf("(0) Sair deste carrinho (Trocar Cliente)\n");
+            printf("Escolha: ");
+            
+            if (scanf("%d", &escolha_usuario) != 1) {
+                limpar_buffer();
+                continue;
+            }
+
+            switch (escolha_usuario) {
+                case 1: 
+                    adicionar_item_carrinho(cabeca_carrinhos, cabeca_clientes, cabeca_produtos, cpf_atual); 
+                    Sleep(1500); 
+                    break;
+                case 2: 
+                    listar_carrinho_cliente(cabeca_carrinhos, cabeca_produtos, cpf_atual); 
+                    Sleep(3000); 
+                    break;
+                case 3: 
+                    remover_item_carrinho(cabeca_carrinhos, cabeca_produtos, cpf_atual); 
+                    Sleep(2000); 
+                    break;
+                case 0:
+                    printf("Saindo do carrinho de %s...\n", cpf_atual);
+                    continuar_no_cpf = 0; // Sai do loop interno e volta para o pedido de CPF
+                    Sleep(1000);
+                    break;
+                default:
+                    printf("Opcao invalida.\n");
+                    Sleep(1000);
+            }
         }
     }
 }

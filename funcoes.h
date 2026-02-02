@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "structs.h"
 
-void menu_inicial();
+void main_sistema();
 
 cliente* cria_lista_clientes();
 int cadastra_cliente(cliente *cabeca);
@@ -14,6 +14,8 @@ void listar_clientes(cliente *cabeca);
 void liberar_lista_clientes(cliente *cabeca);
 cliente* buscar_cliente(cliente *cabeca, char *cpf);
 void atualizar_dados_cliente(cliente *cabeca, char *cpf);
+void remover_cliente(cliente *cabeca, char *cpf);
+void menu_clientes(cliente *cabeca);
 
 produto* cria_lista_produtos();
 void libera_lista_produtos(produto *cabeca);
@@ -23,13 +25,13 @@ void lista_produtos(produto *cabeca);
 produto* buscar_produto(produto *cabeca, int codigo);
 void edita_produto(produto *cabeca);
 void remove_produto(produto *cabeca, int codigo);
-void menu_produtos();
+void menu_produtos(produto *cabeca);
 
 carrinho* cria_lista_carrinhos();
 void menu_compra(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *cabeca_produtos);
-void adicionar_item_carrinho(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *cabeca_produtos);
-void listar_carrinho_cliente(carrinho *cabeca_carrinhos, produto *cabeca_produtos);
-void remover_item_carrinho(carrinho *cabeca_carrinhos, produto *cabeca_produtos);
+void adicionar_item_carrinho(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *cabeca_produtos, char *cpf_cliente);
+void listar_carrinho_cliente(carrinho *cabeca_carrinhos, produto *cabeca_produtos, char *cpf_cliente);
+void remover_item_carrinho(carrinho *cabeca_carrinhos, produto *cabeca_produtos, char *cpf_cliente);
 void libera_lista_carrinhos(carrinho *cabeca_carrinhos);
 
 #endif
