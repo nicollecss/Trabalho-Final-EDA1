@@ -4,10 +4,6 @@
 #include "structs.h"
 
 int main() {
-    /*
-   menu_produtos(); //temporário
-   menu_inicial(); //temporário
-   */
 
    main_sistema();
 
