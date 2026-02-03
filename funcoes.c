@@ -23,6 +23,7 @@
     */
 
 void main_sistema() {
+    system("cls");
     // Inicializa as listas uma única vez através das funções de criação
     cliente *lista_clientes = cria_lista_clientes();
     produto *lista_produtos = cria_lista_produtos();
@@ -33,12 +34,13 @@ void main_sistema() {
         printf("\n=== SISTEMA DA LOJA ===\n");
         printf("1- Clientes\n2- Produtos\n3- Modo Compra\n0- Sair\nEscolha: ");
         scanf("%d", &opcao_principal);
+        system("cls");
 
         switch(opcao_principal) {
             case 1: menu_clientes(lista_clientes); break; 
             case 2: menu_produtos(lista_produtos); break; 
             case 3: menu_compra(lista_carrinhos, lista_clientes, lista_produtos); break;
-            case 0: printf("Encerrando o sistema...\n"); break;
+            case 0: printf("Encerrando o sistema...\n"); Sleep(1000); system("cls"); break;
             default: printf("Opcao invalida!\n"); break;
         }
     }
@@ -73,18 +75,23 @@ int cadastra_cliente(cliente *cabeca){
 
     printf("\nDigite o nome do cliente: ");
     scanf(" %[^\n]", novo->nome);
+    system("cls");
 
     printf("Digite o CPF do cliente (digite somente numeros): ");
     scanf(" %[^\n]", novo->cpf);
+    system("cls");
 
     printf("Digite o e-mail do cliente: ");
     scanf(" %[^\n]", novo->email);
+    system("cls");
 
     printf("Digite o telefone do cliente: ");
     scanf(" %[^\n]", novo->telefone);
+    system("cls");
 
     printf("Digite a data de nascimento do cliente (formato DD/MM/YYYY): ");
     scanf(" %[^\n]", novo->data_nasc);
+    system("cls");
 
     cliente *aux = cabeca;
 
@@ -95,6 +102,9 @@ int cadastra_cliente(cliente *cabeca){
     aux->prox = novo;
 
     printf("Cliente cadastrado com sucesso!\n");
+    printf("Pressione qualquer tecla para continuar...");
+    system("pause > nul");
+    system("cls");
     return 1;
 }
 
@@ -109,6 +119,9 @@ void listar_clientes(cliente *cabeca){
     }
 
     printf("----------------\n");
+    printf("Pressione qualquer tecla para continuar...");
+    system("pause > nul");
+    system("cls");
 }
 
 cliente* buscar_cliente(cliente *cabeca, char *cpf){
@@ -194,6 +207,9 @@ void atualizar_dados_cliente(cliente *cabeca, char *cpf){
     printf("E-mail: %s\n", c->email);
     printf("Telefone: %s\n", c->telefone);
     printf("Data de nascimento: %s\n", c->data_nasc);
+    printf("Pressione qualquer tecla para continuar...");
+    system("pause > nul");
+    system("cls");
 
     return;
 }
@@ -209,8 +225,14 @@ void remover_cliente(cliente *cabeca, char *cpf) {
         ant->prox = atual->prox;
         free(atual);
         printf("Cliente removido com sucesso!\n");
+        printf("Pressione qualquer tecla para continuar...");
+        system("pause > nul");
+        system("cls");
     } else {
         printf("Cliente nao encontrado.\n");
+        printf("Pressione qualquer tecla para continuar...");
+        system("pause > nul");
+        system("cls");
     }
 }
 
@@ -232,6 +254,7 @@ void menu_clientes(cliente *cabeca) {
             limpar_buffer();
             continue;
         }
+        system("cls");
 
         switch(i) {
             case 1:
@@ -252,8 +275,14 @@ void menu_clientes(cliente *cabeca) {
                     printf("\nCliente encontrado!\n");
                     printf("Nome: %s\n", c->nome);
                     printf("Email: %s\n", c->email);
+                    printf("Pressione qualquer tecla para continuar...");
+                    system("pause > nul");
+                    system("cls");
                 } else {
                     printf("\nCliente nao encontrado.\n");
+                    printf("Pressione qualquer tecla para continuar...");
+                    system("pause > nul");
+                    system("cls");
                 }
                 Sleep(2000);
                 break;
@@ -272,6 +301,7 @@ void menu_clientes(cliente *cabeca) {
             case 0:
                 printf("Retornando...\n");
                 Sleep(1000);
+                system("cls");
                 break;
             default:
                 printf("Opcao invalida!\n");
