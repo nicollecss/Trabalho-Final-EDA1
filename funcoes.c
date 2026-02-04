@@ -1,4 +1,3 @@
-// bibliotecas que usaremos
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -16,7 +15,7 @@ void main_sistema() {
 
     int opcao_principal = -1;
     while(opcao_principal != 0) {
-        printf("=== SISTEMA DA LOJA ===\n");
+        printf("\n=== SISTEMA DA LOJA ===\n");
         printf("1- Clientes\n2- Produtos\n3- Modo Compra\n0- Sair\n\nEscolha: ");
         scanf("%d", &opcao_principal);
         system("cls");
@@ -241,7 +240,7 @@ void menu_clientes(cliente *cabeca) {
     char cpf[50];
 
     while(i != 0) {
-        printf("--- GERENCIAMENTO DE CLIENTES ---\n");
+        printf("\n--- GERENCIAMENTO DE CLIENTES ---\n");
         printf("(1) Cadastrar novo cliente\n");
         printf("(2) Listar clientes\n");
         printf("(3) Buscar cliente pelo CPF\n");
@@ -369,7 +368,7 @@ void cadastra_produto(produto *cabeca) {
     char buffer[100];
     int codigo;
 
-    printf("\n\n---------------CADASTRO DO PRODUTO----------------\n");
+    printf("\n---------------CADASTRO DO PRODUTO----------------\n");
     printf("Codigo unico: ");
     if (scanf("%d", &codigo) != 1) {
         printf("\nEntrada invalida.\n");
@@ -439,7 +438,7 @@ void lista_produtos(produto *cabeca){
 
     produto *aux = cabeca->prox;
 
-    printf("\n\n---------LISTA DE PRODUTOS CADASTRADOS---------\n"); 
+    printf("\n---------LISTA DE PRODUTOS CADASTRADOS---------\n"); 
     while(aux != NULL){
         printf("-> Codigo: %d\n", aux->cod_unico);
         printf("-> Nome: %s\n", aux->nome);  
@@ -492,7 +491,7 @@ void edita_produto(produto *cabeca) {
     }
 
     do {
-        printf("\n\n-------- EDITAR PRODUTO --------\n");
+        printf("\n-------- EDITAR PRODUTO --------\n");
         printf("Codigo: %d\n", p->cod_unico);
         printf("Nome: %s\n", p->nome);
         printf("Preco: R$ %.2f\n", p->preco);
@@ -507,6 +506,8 @@ void edita_produto(produto *cabeca) {
         if (scanf("%d", &opcao) != 1) {
             limpar_buffer();
             printf("\nOpcao invalida.\n");
+            Sleep(1500);
+            system("cls");
             continue;
         }
         limpar_buffer();
@@ -561,6 +562,7 @@ void edita_produto(produto *cabeca) {
             default:
                 printf("\nOpcao invalida.\n");
         }
+        system("cls");
 
     } while (opcao != 0);
 }
@@ -603,6 +605,7 @@ void menu_produtos(produto *lista) {
             limpar_buffer();
             printf("Opcao invalida.\n");
             Sleep(1000);
+            system("cls");
             continue;
         }
         limpar_buffer();
@@ -610,12 +613,10 @@ void menu_produtos(produto *lista) {
         switch (opcao) {
             case 1:
                 cadastra_produto(lista);
-                Sleep(1500);
                 break;
 
             case 2:
                 lista_produtos(lista);
-                Sleep(3000);
                 break;
 
             case 3:
@@ -623,7 +624,6 @@ void menu_produtos(produto *lista) {
                 if (scanf("%d", &codigo) != 1) {
                     limpar_buffer();
                     printf("\nCodigo invalido.\n");
-                    Sleep(1500);
                     break;
                 }
                 limpar_buffer();
@@ -637,12 +637,10 @@ void menu_produtos(produto *lista) {
                 } else {
                     printf("\nProduto nao encontrado.\n");
                 }
-                Sleep(2000);
                 break;
 
             case 4:
                 edita_produto(lista);
-                Sleep(2000);
                 break;
 
             case 5:
@@ -650,25 +648,23 @@ void menu_produtos(produto *lista) {
                 if (scanf("%d", &codigo) != 1) {
                     limpar_buffer();
                     printf("Codigo invalido.\n");
-                    Sleep(1500);
                     break;
                 }
                 limpar_buffer();
 
                 remove_produto(lista, codigo);
-                Sleep(2000);
                 break;
 
             case 0:
                 printf("\nRetornando...\n");
-                Sleep(1000);
                 break;
 
             default:
                 printf("\nOpcao invalida.\n");
-                Sleep(1000);
                 break;
         }
+        Sleep(2000);
+        system("cls");
     }
 }
 
@@ -838,7 +834,8 @@ void menu_compra(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *
         // Se digitar 0, sai do modo compra
         if (strcmp(cpf_atual, "0") == 0) {
             printf("Retornando ao menu principal...\n");
-            Sleep(1000);
+            Sleep(1500);
+            system("cls");
             break;
         }
 
@@ -846,6 +843,7 @@ void menu_compra(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *
         if (buscar_cliente(cabeca_clientes, cpf_atual) == NULL) {
             printf("\n[ERRO] Cliente nao cadastrado! Cadastre o cliente primeiro.\n");
             Sleep(2000);
+            system("cls");////
             continue;
         }
 
@@ -885,6 +883,7 @@ void menu_compra(carrinho *cabeca_carrinhos, cliente *cabeca_clientes, produto *
                     printf("Opcao invalida.\n");
                     Sleep(1000);
             }
+            system("cls");
         }
     }
 }
