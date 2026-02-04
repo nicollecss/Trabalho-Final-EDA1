@@ -7,22 +7,6 @@
 #include "structs.h"
 #include <conio.h>
 
-/*
-    cliente *cabeca = cria_lista_clientes();
-    char cpf[12];
-    int x = cadastra_cliente(cabeca);
-    x = cadastra_cliente(cabeca);
-    listar_clientes(cabeca);
-    printf("Digite o cpf a ser buscado (digite apenas numeros): ");
-    scanf(" %[^\n]", cpf);
-
-    cliente *c = buscar_cliente(cabeca, cpf);
-    if(c!=NULL) printf("cliente encontrado: %s\n", c->nome);
-    else printf("cliente nao encontrado!\n");
-
-    liberar_lista_clientes(cabeca);
-    */
-
 void main_sistema() {
     system("cls");
     // Inicializa as listas uma única vez através das funções de criação
@@ -104,7 +88,6 @@ int cadastra_cliente(cliente *cabeca){
 
     printf("Cliente cadastrado com sucesso!\n");
     printf("\nPressione qualquer tecla para continuar...");
-    //system("pause > nul");
     system("pause > nul");
     system("cls");
     return 1;
@@ -116,13 +99,12 @@ void listar_clientes(cliente *cabeca){
     printf("LISTA DE CLIENTES:\n");
 
     while(aux!=NULL){
-        printf("Nome: %s | CPF: %s\n", aux->cpf, aux->nome);
+        printf("Nome: %s | CPF: %s\n", aux->nome, aux->cpf);
         aux = aux->prox;
     }
 
     printf("----------------\n");
     printf("\nPressione qualquer tecla para continuar...");
-    //system("pause > nul");
     system("pause > nul");
     system("cls");
 }
@@ -131,7 +113,7 @@ cliente* buscar_cliente(cliente *cabeca, char *cpf){
     cliente *aux = cabeca->prox;
 
     while(aux!=NULL){
-        if(strcmp(aux->cpf,cpf)==0){
+        if(strcmp(aux->cpf, cpf)==0){
             return aux;
         }
         aux=aux->prox;
@@ -179,40 +161,45 @@ void atualizar_dados_cliente(cliente *cabeca, char *cpf){
         j++;
         printf("Digite o novo nome: ");
         scanf(" %[^\n]",c->nome);
+        system("cls");
     }
-
+    system("cls");
     printf("Deseja alterar o CPF? (s/n) ");
     scanf(" %c",&i);
     if(i=='s'){
         j++;
         printf("Digite o novo CPF: ");
         scanf(" %[^\n]",c->cpf);
+        system("cls");
     }
-
+system("cls");
     printf("Deseja alterar o e-mail? (s/n) ");
     scanf(" %c",&i);
     if(i=='s'){
         j++;
         printf("Digite o novo e-mail: ");
         scanf(" %[^\n]",c->email);
+        system("cls");
     }
-
+    system("cls");
     printf("Deseja alterar o telefone? (s/n) ");
     scanf(" %c",&i);
     if(i=='s'){
         j++;
         printf("Digite o novo telefone (apenas numeros): ");
         scanf(" %[^\n]",c->telefone);
+        system("cls");
     }
-
+system("cls");
     printf("Deseja alterar a data de nascimento? (s/n) ");
     scanf(" %c",&i);
     if(i=='s'){
         j++;
         printf("Digite a nova data de nascimento (formato DD/MM/YYYY): ");
         scanf(" %[^\n]",c->data_nasc);
+        system("cls");
     }
-
+system("cls");
     if(j!=0) printf("\nDados atualizados com sucesso! Novos dados:\n");
     else printf("\nUsuario nao realizou nenhuma alteracao. Dados do cliente selecionado:\n");
     printf("Nome: %s\n", c->nome);
@@ -324,6 +311,18 @@ void menu_clientes(cliente *cabeca) {
                 Sleep(1000);
                 break;
         }
+    }
+}
+
+void libera_lista_clientes(cliente *cabeca) {
+    if (cabeca == NULL) return;
+
+    cliente *aux = cabeca;
+    while (aux != NULL) {
+        cliente *temp = aux;
+        aux = aux->prox;
+
+        free(temp);
     }
 }
 

@@ -16,6 +16,7 @@ cliente* buscar_cliente(cliente *cabeca, char *cpf);
 void atualizar_dados_cliente(cliente *cabeca, char *cpf);
 void remover_cliente(cliente *cabeca, char *cpf);
 void menu_clientes(cliente *cabeca);
+void libera_lista_clientes(cliente *cabeca);
 
 produto* cria_lista_produtos();
 void libera_lista_produtos(produto *cabeca);
