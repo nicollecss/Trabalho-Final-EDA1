@@ -5,6 +5,7 @@
 #include <windows.h>
 #include "funcoes.h"
 #include "structs.h"
+#include <conio.h>
 
 /*
     cliente *cabeca = cria_lista_clientes();
@@ -31,8 +32,8 @@ void main_sistema() {
 
     int opcao_principal = -1;
     while(opcao_principal != 0) {
-        printf("\n=== SISTEMA DA LOJA ===\n");
-        printf("1- Clientes\n2- Produtos\n3- Modo Compra\n0- Sair\nEscolha: ");
+        printf("=== SISTEMA DA LOJA ===\n");
+        printf("1- Clientes\n2- Produtos\n3- Modo Compra\n0- Sair\n\nEscolha: ");
         scanf("%d", &opcao_principal);
         system("cls");
 
@@ -73,7 +74,7 @@ int cadastra_cliente(cliente *cabeca){
     }
     //nome, cpf, email, telefone, data nasc
 
-    printf("\nDigite o nome do cliente: ");
+    printf("Digite o nome do cliente: ");
     scanf(" %[^\n]", novo->nome);
     system("cls");
 
@@ -102,7 +103,8 @@ int cadastra_cliente(cliente *cabeca){
     aux->prox = novo;
 
     printf("Cliente cadastrado com sucesso!\n");
-    printf("Pressione qualquer tecla para continuar...");
+    printf("\nPressione qualquer tecla para continuar...");
+    //system("pause > nul");
     system("pause > nul");
     system("cls");
     return 1;
@@ -114,12 +116,13 @@ void listar_clientes(cliente *cabeca){
     printf("LISTA DE CLIENTES:\n");
 
     while(aux!=NULL){
-        printf("CPF: %s | Nome: %s\n", aux->cpf, aux->nome);
+        printf("Nome: %s | CPF: %s\n", aux->cpf, aux->nome);
         aux = aux->prox;
     }
 
     printf("----------------\n");
-    printf("Pressione qualquer tecla para continuar...");
+    printf("\nPressione qualquer tecla para continuar...");
+    //system("pause > nul");
     system("pause > nul");
     system("cls");
 }
@@ -153,22 +156,27 @@ void liberar_lista_clientes(cliente *cabeca){
 void atualizar_dados_cliente(cliente *cabeca, char *cpf){
     cliente *c = buscar_cliente(cabeca, cpf);
     char i;
+    int j=0;
 
     if(c==NULL){
-        printf("cliente nao encontrado\n");
+        printf("cliente nao encontrado\n\n");
+        printf("Pressione qualquer tecla para continuar...");
+        system("pause > nul");
+        system("cls");
         return;
     }
 
-    printf("Cliente encontrado\n");
+    printf("\nCliente encontrado\n");
     printf("Nome: %s\n",c->nome);
     printf("CPF: %s\n",c->cpf);
     printf("E-mail: %s\n",c->email);
     printf("Telefone: %s\n",c->telefone);
-    printf("Data de nascimento: %s\n",c->data_nasc);
+    printf("Data de nascimento: %s\n\n",c->data_nasc);
     
     printf("Deseja alterar o nome? (s/n) ");
     scanf(" %c]",&i);
     if(i=='s'){
+        j++;
         printf("Digite o novo nome: ");
         scanf(" %[^\n]",c->nome);
     }
@@ -176,6 +184,7 @@ void atualizar_dados_cliente(cliente *cabeca, char *cpf){
     printf("Deseja alterar o CPF? (s/n) ");
     scanf(" %c",&i);
     if(i=='s'){
+        j++;
         printf("Digite o novo CPF: ");
         scanf(" %[^\n]",c->cpf);
     }
@@ -183,6 +192,7 @@ void atualizar_dados_cliente(cliente *cabeca, char *cpf){
     printf("Deseja alterar o e-mail? (s/n) ");
     scanf(" %c",&i);
     if(i=='s'){
+        j++;
         printf("Digite o novo e-mail: ");
         scanf(" %[^\n]",c->email);
     }
@@ -190,6 +200,7 @@ void atualizar_dados_cliente(cliente *cabeca, char *cpf){
     printf("Deseja alterar o telefone? (s/n) ");
     scanf(" %c",&i);
     if(i=='s'){
+        j++;
         printf("Digite o novo telefone (apenas numeros): ");
         scanf(" %[^\n]",c->telefone);
     }
@@ -197,17 +208,19 @@ void atualizar_dados_cliente(cliente *cabeca, char *cpf){
     printf("Deseja alterar a data de nascimento? (s/n) ");
     scanf(" %c",&i);
     if(i=='s'){
+        j++;
         printf("Digite a nova data de nascimento (formato DD/MM/YYYY): ");
         scanf(" %[^\n]",c->data_nasc);
     }
 
-    printf("Dados atualizados com sucesso! Novos dados:\n");
+    if(j!=0) printf("\nDados atualizados com sucesso! Novos dados:\n");
+    else printf("\nUsuario nao realizou nenhuma alteracao. Dados do cliente selecionado:\n");
     printf("Nome: %s\n", c->nome);
     printf("CPF: %s\n", c->cpf);
     printf("E-mail: %s\n", c->email);
     printf("Telefone: %s\n", c->telefone);
     printf("Data de nascimento: %s\n", c->data_nasc);
-    printf("Pressione qualquer tecla para continuar...");
+    printf("\nPressione qualquer tecla para continuar...");
     system("pause > nul");
     system("cls");
 
@@ -225,12 +238,12 @@ void remover_cliente(cliente *cabeca, char *cpf) {
         ant->prox = atual->prox;
         free(atual);
         printf("Cliente removido com sucesso!\n");
-        printf("Pressione qualquer tecla para continuar...");
+        printf("\nPressione qualquer tecla para continuar...");
         system("pause > nul");
         system("cls");
     } else {
         printf("Cliente nao encontrado.\n");
-        printf("Pressione qualquer tecla para continuar...");
+        printf("\nPressione qualquer tecla para continuar...");
         system("pause > nul");
         system("cls");
     }
@@ -241,13 +254,13 @@ void menu_clientes(cliente *cabeca) {
     char cpf[50];
 
     while(i != 0) {
-        printf("\n--- GERENCIAMENTO DE CLIENTES ---\n");
+        printf("--- GERENCIAMENTO DE CLIENTES ---\n");
         printf("(1) Cadastrar novo cliente\n");
         printf("(2) Listar clientes\n");
         printf("(3) Buscar cliente pelo CPF\n");
         printf("(4) Atualizar dados de cliente\n");
         printf("(5) Remover cliente\n"); 
-        printf("(0) Voltar ao menu principal\n");
+        printf("(0) Voltar ao menu principal\n\n");
         printf("Escolha uma opcao: ");
         
         if (scanf("%d", &i) != 1) {
@@ -272,14 +285,17 @@ void menu_clientes(cliente *cabeca) {
                 
                 cliente *c = buscar_cliente(cabeca, cpf);
                 if(c != NULL) {
-                    printf("\nCliente encontrado!\n");
+                    printf("\nCliente encontrado!\n\n");
                     printf("Nome: %s\n", c->nome);
-                    printf("Email: %s\n", c->email);
-                    printf("Pressione qualquer tecla para continuar...");
+                    printf("CPF: %s\n", c->cpf);
+                    printf("Telefone: %s\n", c->telefone);
+                    printf("Data de nascimento: %s\n", c->data_nasc);
+                    printf("Email: %s\n\n", c->email);
+                    printf("\nPressione qualquer tecla para continuar...");
                     system("pause > nul");
                     system("cls");
                 } else {
-                    printf("\nCliente nao encontrado.\n");
+                    printf("\nCliente nao encontrado.\n\n");
                     printf("Pressione qualquer tecla para continuar...");
                     system("pause > nul");
                     system("cls");
